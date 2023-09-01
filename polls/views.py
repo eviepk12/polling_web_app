@@ -1,4 +1,27 @@
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
+from django.views import generic
 
-def index(request):
-    return HttpResponse("Hello, you're at index")
+from .models import Choice, Question
+
+
+class IndexView(generic.ListView):
+    template_name = "polls/index.html"
+    context_object_name = "latest_question_list"
+
+    def get_queryset(self):
+        return Question.object.order_by("-pub_date")[:5]
+
+
+class DetailView(generic.DetailView):
+    model = Question
+    template_name = "polls/detail.html"
+
+
+class ResultsView(generic.DetailView):
+    model = Question
+    template_name = "polls/results.html"
+
+def vote(request, question_id):
+    return HttpResponse("You're voting on question %s." % question_id)
