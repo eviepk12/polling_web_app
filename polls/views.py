@@ -15,13 +15,18 @@ class IndexView(generic.ListView):
         """
             Returns the last five questions and queues future questions at their given date
         """
-
         return Question.objects.filter(pub_date__lte=timezone.now()).order_by("-pub_date")[:5]
 
 
 class DetailView(generic.DetailView):
     model = Question
     template_name = "polls/detail.html"
+
+    def get_queryset(self):
+        """
+            Excludes questions that have not been published
+        """
+        return Question.objects.filter(pub_date__lte=timezone.now())
 
 
 class ResultsView(generic.DetailView):
